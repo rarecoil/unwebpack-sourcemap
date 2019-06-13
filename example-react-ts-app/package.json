@@ -1,0 +1,67 @@
+{
+  "name": "react-webpack-typescript-starter",
+  "version": "0.1.0",
+  "description": "Starter kit for React, Webpack (with Hot Module Replacement), Typescript and Babel.",
+  "keywords": [
+    "react",
+    "webpack",
+    "typescript",
+    "babel",
+    "sass",
+    "hmr",
+    "starter",
+    "boilerplate"
+  ],
+  "author": "Viktor Persson",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vikpe/react-webpack-typescript-starter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vikpe/react-webpack-typescript-starter/issues"
+  },
+  "homepage": "https://github.com/vikpe/react-webpack-typescript-starter",
+  "scripts": {
+    "build": "yarn run clean-dist && webpack -p --config=configs/webpack/prod.js",
+    "clean-dist": "rm -f -r -d dist",
+    "lint": "tslint './src/**/*.ts*' --format stylish --force",
+    "start": "yarn run start-dev",
+    "start-dev": "webpack-dev-server --config=configs/webpack/dev.js",
+    "start-prod": "yarn run build && node express.js",
+    "test": "jest --watch --coverage --config=configs/jest.json"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "@babel/preset-react": "^7.0.0",
+    "@types/jest": "^24.0.13",
+    "@types/node": "^12.0.8",
+    "@types/react": "^16.8.19",
+    "@types/react-dom": "^16.8.4",
+    "awesome-typescript-loader": "^5.2.1",
+    "babel-loader": "^8.0.6",
+    "css-loader": "^3.0.0",
+    "express": "^4.17.1",
+    "file-loader": "^4.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "image-webpack-loader": "^5.0.0",
+    "jest": "^24.8.0",
+    "node-sass": "^4.12.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-hot-loader": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.1",
+    "uglifyjs-webpack-plugin": "^2.1.3",
+    "webpack": "^4.33.0",
+    "webpack-cli": "^3.3.4",
+    "webpack-dev-middleware": "^3.7.0",
+    "webpack-dev-server": "^3.7.1",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {}
+}
