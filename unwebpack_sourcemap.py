@@ -214,7 +214,7 @@ class SourceMapExtractor(object):
         if result.status_code == 200:
             return result.text
         else:
-            print("WARNING: Got status code %d for URI %s" % (uri, result.status_code))
+            print("WARNING: Got status code %d for URI %s" % (result.status_code, uri))
             return False
 
 
