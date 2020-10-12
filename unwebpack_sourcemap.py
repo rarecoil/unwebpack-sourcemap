@@ -116,6 +116,15 @@ class SourceMapExtractor(object):
             next_target_uri = ""
             if parsed_uri.scheme != '':
                 next_target_uri = source
+            elif source.startswith("//"):
+                next_target_uri = urlparse(uri).scheme + ":" + source
+            elif source.startswith("./"):
+                current_uri = urlparse(uri)
+                if current_uri.path.endswith("/"):
+                    built_uri = current_uri.scheme + "://" + current_uri.netloc + current_uri.path + source
+                else:
+                    built_uri = current_uri.scheme + "://" + current_uri.netloc + current_uri.path[:current_uri.path.rindex("/")]+source[1:]
+                next_target_uri = built_uri
             else:
                 current_uri = urlparse(uri)
                 built_uri = current_uri.scheme + "://" + current_uri.netloc + source
