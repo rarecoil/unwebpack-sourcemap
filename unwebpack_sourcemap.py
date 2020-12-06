@@ -127,7 +127,7 @@ class SourceMapExtractor(object):
                 next_target_uri = built_uri
             else:
                 current_uri = urlparse(uri)
-                built_uri = current_uri.scheme + "://" + current_uri.netloc + source
+                built_uri = current_uri.scheme + "://" + current_uri.netloc +"/"+ source
                 next_target_uri = built_uri
 
             js_data = self._get_remote_data(next_target_uri)
@@ -218,6 +218,7 @@ class SourceMapExtractor(object):
 
     def _get_remote_data(self, uri):
         """Get remote data via http."""
+        print(f"fetching {uri}")
         result = requests.get(uri)
 
         if result.status_code == 200:
