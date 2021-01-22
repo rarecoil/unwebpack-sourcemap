@@ -215,7 +215,7 @@ class SourceMapExtractor(object):
             return result.text
         else:
             print("WARNING: Got status code %d for URI %s" % (result.status_code, uri))
-            return False
+            return None
 
 
 class PathSanitiser(object):
