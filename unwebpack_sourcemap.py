@@ -211,6 +211,10 @@ class SourceMapExtractor(object):
         """Get remote data via http."""
         result = requests.get(uri)
 
+        # Redirect
+        if not uri == result.url:
+            return self._get_remote_data(result.url)
+
         if result.status_code == 200:
             return result.text
         else:
