@@ -209,7 +209,7 @@ class SourceMapExtractor(object):
 
     def _get_remote_data(self, uri):
         """Get remote data via http."""
-        result = requests.get(uri)
+        result = requests.get(uri, verify=False)
 
         if result.status_code == 200:
             return result.text
