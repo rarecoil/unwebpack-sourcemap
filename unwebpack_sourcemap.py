@@ -90,25 +90,25 @@ class SourceMapExtractor(object):
 
     def _parse_remote_sourcemap(self, uri):
         """GET a remote sourcemap and parse it."""
-        data = self._get_remote_data(uri)
+        data, final_uri = self._get_remote_data(uri)
         if data is not None:
             self._parse_sourcemap(data, True)
         else:
-            print("WARNING: Could not retrieve sourcemap from URI %s" % uri)
+            print("WARNING: Could not retrieve sourcemap from URI %s" % final_uri)
 
 
     def _detect_js_sourcemaps(self, uri):
         """Pull HTML and attempt to find JS files, then read the JS files and look for sourceMappingURL."""
         remote_sourcemaps = []
-        data = self._get_remote_data(uri)
+        data, final_uri = self._get_remote_data(uri)
 
         # TODO: scan to see if this is a sourcemap instead of assuming HTML
-        print("Detecting sourcemaps in HTML at %s" % uri)
+        print("Detecting sourcemaps in HTML at %s" % final_uri)
         script_strainer = SoupStrainer("script", src=True)
         try:
             soup = BeautifulSoup(data, "html.parser", parse_only=script_strainer)
         except:
-            raise SourceMapExtractorError("Could not parse HTML at URI %s" % uri)
+            raise SourceMapExtractorError("Could not parse HTML at URI %s" % final_uri)
 
         for script in soup:
             source = script['src']
@@ -117,11 +117,11 @@ class SourceMapExtractor(object):
             if parsed_uri.scheme != '':
                 next_target_uri = source
             else:
-                current_uri = urlparse(uri)
+                current_uri = urlparse(final_uri)
                 built_uri = current_uri.scheme + "://" + current_uri.netloc + source
                 next_target_uri = built_uri
 
-            js_data = self._get_remote_data(next_target_uri)
+            js_data, last_target_uri = self._get_remote_data(next_target_uri)
             # get last line of file
             last_line = js_data.split("\n")[-1].strip()
             regex = "\\/\\/#\s*sourceMappingURL=(.*)$"
@@ -133,7 +133,7 @@ class SourceMapExtractor(object):
                     print("Detected sourcemap at remote location %s" % asset)
                     remote_sourcemaps.append(asset)
                 else:
-                    current_uri = urlparse(next_target_uri)
+                    current_uri = urlparse(last_target_uri)
                     asset_uri = current_uri.scheme + '://' + \
                         current_uri.netloc + \
                         os.path.dirname(current_uri.path) + \
@@ -211,11 +211,15 @@ class SourceMapExtractor(object):
         """Get remote data via http."""
         result = requests.get(uri)
 
+        # Redirect
+        if not uri == result.url:
+            return self._get_remote_data(result.url)
+
         if result.status_code == 200:
-            return result.text
+            return result.text, result.url
         else:
-            print("WARNING: Got status code %d for URI %s" % (result.status_code, uri))
-            return False
+            print("WARNING: Got status code %d for URI %s" % (result.status_code, result.url))
+            return None, result.url
 
 
 class PathSanitiser(object):
