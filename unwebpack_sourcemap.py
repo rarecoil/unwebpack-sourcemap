@@ -123,7 +123,7 @@ class SourceMapExtractor(object):
 
             js_data, last_target_uri = self._get_remote_data(next_target_uri)
             # get last line of file
-            last_line = js_data.split("\n")[-1].strip()
+            last_line = js_data.rstrip().split("\n")[-1]
             regex = "\\/\\/#\s*sourceMappingURL=(.*)$"
             matches = re.search(regex, last_line)
             if matches:
