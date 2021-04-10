@@ -36,7 +36,6 @@ class SourceMapExtractor(object):
 
     def __init__(self, options):
         """Initialize the class."""
-
         if 'output_directory' not in options:
             raise SourceMapExtractorError("output_directory must be set in options.")
         else:
@@ -48,7 +47,10 @@ class SourceMapExtractor(object):
                     raise SourceMapExtractorError("output_directory does not exist. Pass --make-directory to auto-make it.")
 
         self._path_sanitiser = PathSanitiser(self._output_directory)
-
+        
+        if options['disable_ssl_verification'] == True:
+            self.disable_verify_ssl = True
+            
         if options['local'] == True:
             self._is_local = True
 
@@ -209,7 +211,11 @@ class SourceMapExtractor(object):
 
     def _get_remote_data(self, uri):
         """Get remote data via http."""
-        result = requests.get(uri)
+
+        if self.disable_verify_ssl == True:
+            result = requests.get(uri, verify=False)
+        else:
+            result = requests.get(uri)
 
         # Redirect
         if not uri == result.url:
@@ -339,8 +345,10 @@ if __name__ == "__main__":
         help="Attempt to detect sourcemaps from JS assets in retrieved HTML.")
     parser.add_argument("--make-directory", action="store_true", default=False,
         help="Make the output directory if it doesn't exist.")
-    parser.add_argument("--dangerously-write-paths", action="store_true", default="False",
+    parser.add_argument("--dangerously-write-paths", action="store_true", default=False,
         help="Write full paths. WARNING: Be careful here, you are pulling directories from an untrusted source.")
+    parser.add_argument("--disable-ssl-verification", action="store_true", default=False,
+         help="The script will not verify the site's SSL certificate.")
 
     parser.add_argument("uri_or_file", help="The target URI or file.")
     parser.add_argument("output_directory", help="Directory to output from sourcemap to.")
