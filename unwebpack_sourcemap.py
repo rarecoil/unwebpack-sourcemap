@@ -50,6 +50,8 @@ class SourceMapExtractor(object):
         
         if options['disable_ssl_verification'] == True:
             self.disable_verify_ssl = True
+        else:
+            self.disable_verify_ssl = False
             
         if options['local'] == True:
             self._is_local = True
