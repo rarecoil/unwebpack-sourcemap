@@ -183,7 +183,7 @@ class SourceMapExtractor(object):
                 write_path = self._get_sanitised_file_path(source)
                 if write_path is not None:
                     os.makedirs(os.path.dirname(write_path), mode=0o755, exist_ok=True)
-                    with open(write_path, 'w', encoding='utf-8', errors='ignore') as f:
+                    with open(write_path, 'w', encoding='utf-8', errors='ignore', newline='') as f:
                         print("Writing %s..." % os.path.basename(write_path))
                         f.write(content)
             else:
