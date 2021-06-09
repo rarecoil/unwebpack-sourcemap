@@ -15,7 +15,7 @@ import os
 import re
 import string
 import sys
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from unicodedata import normalize
 
 import requests
@@ -114,34 +114,21 @@ class SourceMapExtractor(object):
 
         for script in soup:
             source = script['src']
-            parsed_uri = urlparse(source)
-            next_target_uri = ""
-            if parsed_uri.scheme != '':
-                next_target_uri = source
-            else:
-                current_uri = urlparse(final_uri)
-                built_uri = current_uri.scheme + "://" + current_uri.netloc + source
-                next_target_uri = built_uri
+            if urlparse(source).scheme == '':
+                source = urljoin(final_uri, source)
 
-            js_data, last_target_uri = self._get_remote_data(next_target_uri)
+            js_data, last_target_uri = self._get_remote_data(source)
             # get last line of file
             last_line = js_data.rstrip().split("\n")[-1]
             regex = "\\/\\/#\s*sourceMappingURL=(.*)$"
             matches = re.search(regex, last_line)
             if matches:
                 asset = matches.groups(0)[0].strip()
-                asset_target = urlparse(asset)
-                if asset_target.scheme != '':
-                    print("Detected sourcemap at remote location %s" % asset)
-                    remote_sourcemaps.append(asset)
-                else:
-                    current_uri = urlparse(last_target_uri)
-                    asset_uri = current_uri.scheme + '://' + \
-                        current_uri.netloc + \
-                        os.path.dirname(current_uri.path) + \
-                        '/' + asset
-                    print("Detected sourcemap at remote location %s" % asset_uri)
-                    remote_sourcemaps.append(asset_uri)
+                if urlparse(asset).scheme == '':
+                    asset = urljoin(last_target_uri, asset)
+
+                print("Detected sourcemap at remote location %s" % asset)
+                remote_sourcemaps.append(asset)
 
         return remote_sourcemaps
 
