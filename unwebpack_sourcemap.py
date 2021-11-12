@@ -173,25 +173,18 @@ class SourceMapExtractor(object):
         if len(map_object['sources']) != len(map_object['sourcesContent']):
             print("WARNING: sources != sourcesContent, filenames may not match content")
 
-        idx = 0
-        for source in map_object['sources']:
-            if idx < len(map_object['sourcesContent']):
-                path = source
-                content = map_object['sourcesContent'][idx]
-                idx += 1
-                if content is None:
-                    continue
+        for source, content in zip(map_object['sources'], map_object['sourcesContent']):
+            # remove webpack:// from paths
+            # and do some checks on it
+            write_path = self._get_sanitised_file_path(source)
+            if write_path is None:
+                print("ERROR: Could not sanitize path %s" % source)
+                continue
 
-                # remove webpack:// from paths
-                # and do some checks on it
-                write_path = self._get_sanitised_file_path(source)
-                if write_path is not None:
-                    os.makedirs(os.path.dirname(write_path), mode=0o755, exist_ok=True)
-                    with open(write_path, 'w', encoding='utf-8', errors='ignore') as f:
-                        print("Writing %s..." % os.path.basename(write_path))
-                        f.write(content)
-            else:
-                break
+            os.makedirs(os.path.dirname(write_path), mode=0o755, exist_ok=True)
+            with open(write_path, 'w', encoding='utf-8', errors='ignore', newline='') as f:
+                print("Writing %s..." % os.path.basename(write_path))
+                f.write(content)
 
     def _get_sanitised_file_path(self, sourcePath):
         """Sanitise webpack paths for separators/relative paths"""
