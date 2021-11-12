@@ -47,10 +47,12 @@ class SourceMapExtractor(object):
                     raise SourceMapExtractorError("output_directory does not exist. Pass --make-directory to auto-make it.")
 
         self._path_sanitiser = PathSanitiser(self._output_directory)
-        
+
         if options['disable_ssl_verification'] == True:
             self.disable_verify_ssl = True
-            
+        else:
+            self.disable_verify_ssl = False
+          
         if options['local'] == True:
             self._is_local = True
 
