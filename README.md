@@ -1,5 +1,7 @@
 # unwebpack-sourcemap
 
+### This script is no longer maintained; please fork. I don't have the time to keep up with this project unfortunately.
+
 ### Recover uncompiled TypeScript sources, JSX, and more from Webpack sourcemaps.
 
 As single-page applications take over the world, more and more is being asked of the browser as a client. It is common for SPAs to use [Webpack](https://webpack.js.org/) to handle browser script build processes. Usually, Webpack will transpile React/Vue/TypeScript/etc. to JavaScript, minify/compress it, and then serve it as a single bundle to the application.
